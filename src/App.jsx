@@ -45,13 +45,13 @@ function App() {
   const [logs, setLogs] = useState([]);
   const [showLogs, setShowLogs] = useState(true);
   const [reports, setReports] = useState([]);
-  const [devices, setDevices] = useState({ desktop: true, mobile: false });
+  const [devices, setDevices] = useState({ desktop: true, mobile: true });
   const [categories, setCategories] = useState({
     performance: true,
-    accessibility: false,
-    'best-practices': false,
-    seo: false,
-    pwa: false
+    accessibility: true,
+    'best-practices': true,
+    seo: true,
+    pwa: true
   });
   const logRef = useRef(null);
 
@@ -91,7 +91,7 @@ function App() {
       <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f4f6f8' }}>
         {/* Sidebar */}
         <Box sx={{ width: 80, background: '#212b36', display: 'flex', flexDirection: 'column', alignItems: 'center', py: 3, boxShadow: 2 }}>
-          <Avatar src="https://img.icons8.com/ios-filled/100/ffffff/lighthouse.png" sx={{ width: 48, height: 48, mb: 2, bgcolor: 'transparent' }} />
+          <img src={process.env.PUBLIC_URL + '/lighthouse.png'} alt="Lighthouse" style={{ width: 48, height: 48, marginBottom: 16 }} />
         </Box>
         {/* Main Content */}
         <Container maxWidth="md" sx={{ mt: 4, mb: 4, flexGrow: 1 }}>
