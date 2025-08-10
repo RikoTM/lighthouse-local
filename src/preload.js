@@ -8,5 +8,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onLog: function(callback) { ipcRenderer.on('log', callback); },
   onProgress: function(callback) { ipcRenderer.on('progress', callback); },
   onReport: function(callback) { ipcRenderer.on('report', callback); },
-  showInFolder: function(filePath) { return ipcRenderer.invoke('show-in-folder', filePath); }
+  showInFolder: function(filePath) { return ipcRenderer.invoke('show-in-folder', filePath); },
+  openInBrowser: function(filePath) { return ipcRenderer.invoke('open-in-browser', filePath); },
+  getAppData: function() { return ipcRenderer.invoke('get-app-data'); }
 });

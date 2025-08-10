@@ -71,12 +71,15 @@ ipcMain.handle('start-scan', async (event, urls) => {
       // Get JSON report
       const jsonResult = await lh(url, { port: chrome.port, output: 'json' });
       await chrome.kill();
-      const htmlPath = path.join(dateFolder, `report_${i+1}.html`);
-      const jsonPath = path.join(dateFolder, `report_${i+1}.json`);
-      fs.writeFileSync(htmlPath, typeof htmlResult === 'string' ? htmlResult : htmlResult.report);
-      fs.writeFileSync(jsonPath, typeof jsonResult === 'string' ? jsonResult : JSON.stringify(jsonResult.lhr, null, 2));
-      sendReport(win, { url, status: 'Success', htmlPath, jsonPath });
-      sendLog(win, `Completed: ${url}`);
+  // Create a safe domain-based filename
+  const domain = url.replace(/^https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '_');
+  const datetime = new Date().toISOString().replace(/[:.]/g, '-');
+  const htmlPath = path.join(dateFolder, `${domain}_${datetime}.html`);
+  const jsonPath = path.join(dateFolder, `${domain}_${datetime}.json`);
+  fs.writeFileSync(htmlPath, typeof htmlResult === 'string' ? htmlResult : htmlResult.report);
+  fs.writeFileSync(jsonPath, typeof jsonResult === 'string' ? jsonResult : JSON.stringify(jsonResult.lhr, null, 2));
+  sendReport(win, { url, status: 'Success', htmlPath, jsonPath });
+  sendLog(win, `Completed: ${url}`);
     } catch (err) {
       sendReport(win, { url, status: 'Error', htmlPath: '', jsonPath: '' });
       sendLog(win, `Error scanning ${url}: ${err.message}`);
@@ -94,4 +97,12 @@ ipcMain.handle('cancel-scan', () => {
 
 ipcMain.handle('show-in-folder', (event, filePath) => {
   shell.showItemInFolder(filePath);
+});
+
+ipcMain.handle('open-in-browser', (event, filePath) => {
+  shell.openPath(filePath);
+});
+
+ipcMain.handle('get-app-data', () => {
+  return app.getPath('userData');
 });
