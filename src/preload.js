@@ -10,5 +10,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onReport: function(callback) { ipcRenderer.on('report', callback); },
   showInFolder: function(filePath) { return ipcRenderer.invoke('show-in-folder', filePath); },
   openInBrowser: function(filePath) { return ipcRenderer.invoke('open-in-browser', filePath); },
-  getAppData: function() { return ipcRenderer.invoke('get-app-data'); }
+  getAppData: function() { return ipcRenderer.invoke('get-app-data'); },
+  exportExcel: function() { return ipcRenderer.invoke('export-excel'); }
 });
