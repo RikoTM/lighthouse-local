@@ -94,7 +94,7 @@ function App() {
           <img src={process.env.PUBLIC_URL + '/lighthouse.png'} alt="Lighthouse" style={{ width: 48, height: 48, marginBottom: 16 }} />
         </Box>
         {/* Main Content */}
-        <Container maxWidth="md" sx={{ mt: 4, mb: 4, flexGrow: 1 }}>
+        <Container maxWidth="xl" sx={{ mt: 4, mb: 4, flexGrow: 1 }}>
           <Paper elevation={3} sx={{ p: 4, borderRadius: 4, background: '#fff' }}>
             <Typography variant="h4" gutterBottom align="center">Lighthouse Local</Typography>
             <Divider sx={{ mb: 3 }} />

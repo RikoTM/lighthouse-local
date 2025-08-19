@@ -20,8 +20,8 @@ async function getChromeLauncher() {
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 900,
-    height: 700,
+    width: 1027,
+    height: 768,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
@@ -84,7 +84,7 @@ ipcMain.handle('start-scan', async (event, opts) => {
         // Lighthouse options and config per ticket #12058
         const lhOpts = {
           port: chrome.port,
-          output: 'html'
+          output: ['html','json']
         };
         // Use custom screenEmulation for desktop scans
         let lhConfig;
@@ -96,8 +96,8 @@ ipcMain.handle('start-scan', async (event, opts) => {
               onlyCategories: categories,
               screenEmulation: {
                 mobile: false,
-                width: 1920,
-                height: 1080,
+                width: 1024,
+                height: 768,
                 deviceScaleFactor: 1,
                 disabled: false,
                 screenOrientation: 'portrait'
@@ -134,22 +134,30 @@ ipcMain.handle('start-scan', async (event, opts) => {
               }
           };
         }
-        const htmlResult = await lh(url, lhOpts, lhConfig);
+        const result = await lh(url, lhOpts, lhConfig);
         if (cancelRequested) {
           await chrome.kill();
           sendLog(win, 'Scan cancelled by user.');
           break;
         }
-        lhOpts.output = 'json';
-        const jsonResult = await lh(url, lhOpts, lhConfig);
+        //lhOpts.output = 'json';
+        //const jsonResult = await lh(url, lhOpts, lhConfig);
         await chrome.kill();
         // Create a safe domain-based filename
         const domain = url.replace(/^https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '_');
         const datetime = new Date().toISOString().replace(/[:.]/g, '-');
         const htmlPath = path.join(dateFolder, `${domain}_${device}_${datetime}.html`);
         const jsonPath = path.join(dateFolder, `${domain}_${device}_${datetime}.json`);
-  fs.writeFileSync(htmlPath, typeof htmlResult === 'string' ? htmlResult : htmlResult.report);
-  fs.writeFileSync(jsonPath, typeof jsonResult === 'string' ? jsonResult : JSON.stringify(jsonResult.lhr, null, 2));
+
+        if (Array.isArray(result.report)) {
+          fs.writeFileSync(htmlPath, result.report[0]);
+          fs.writeFileSync(jsonPath, result.report[1]);
+        } else {
+          fs.writeFileSync(htmlPath, result.report);
+          fs.writeFileSync(jsonPath, JSON.stringify(result.lhr, null, 2));
+        }
+  // fs.writeFileSync(htmlPath, typeof htmlResult === 'string' ? htmlResult : htmlResult.report);
+  // fs.writeFileSync(jsonPath, typeof jsonResult === 'string' ? jsonResult : JSON.stringify(jsonResult.lhr, null, 2));
   lastScanJsonFiles.push(jsonPath);
   sendReport(win, { url, device, status: 'Success', htmlPath, jsonPath });
   sendLog(win, `Completed: ${url} [${device}]`);

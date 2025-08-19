@@ -1,6 +1,6 @@
 {
-  "name": "lighthouse-local",
-  "version": "1.0.0",
+  "name": "lighthouse-electron",
+  "version": "0.0.1",
   "main": "src/main.js",
   "build": {
     "files": [
